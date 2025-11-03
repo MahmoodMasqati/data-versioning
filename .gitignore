@@ -1,3 +1,5 @@
 # misc
 .DS_Store
 /cheese_dataset
+# Ignore folder containing sensitive credentials and secrets
+secrets/
