@@ -55,7 +55,10 @@ Justification: gcsfuse is a FUSE (Filesystem in Userspace) layer that mounts a G
 **Q4 [2 points].** If you add a new image file outside the container in the `cheese_dataset` folder, does it appear in the GCS bucket? Explain why or why not, and identify the lines responsible for this behavior.
 
 **Answer Q4:** No, the new image file outside the container in the cheese_dataset will not appear in GCS bucket becuase the data-versioning flow depends on the FUSE mount inside the container, not the host folder.
-The behavior is determined by the following lines in the docker-entrypoint.sh
+The behavior is determined by the following lines:
+in docker-shell.sh:
+-v "$BASE_DIR":/app
+in the docker-entrypoint.sh
 1. `gcsfuse gs://$GCS_BUCKET_NAME/images /mnt/gcs_data/images`
 2. `mount --bind /mnt/gcs_data/images /app/cheese_dataset`
 
