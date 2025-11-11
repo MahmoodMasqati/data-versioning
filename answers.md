@@ -36,6 +36,7 @@ Justification: gcsfuse is a FUSE (Filesystem in Userspace) layer that mounts a G
        I) -e GCP_ZONE=GCP_ZONE
        J) -e GCS_BUCKET_NAME=GCS_BUCKET_NAME
        k)  data-version-cli
+```
 
 **Answer Q2:**  **A,F,H and I** can be dropped without breaking the data-versioning flow.'A' is not need if 'B' and 'C' are used since gfuse needs only 'B' and 'C' for its implementation and hence 'A' becomes optional and it will not break the dataversioning flow if 'A' is removed. 'F' is only required to identify the user (author) when making Git commits. The data-versioning flow (DVC/GCS/FUSE) works without it, as DVC/GCS do not require the Git config. 'H' is optional as GCS operations can infer the project from service account. 'I' is also optinoal as its only relevant for zonal services and not for GCS access or data-versioning flow.
 
@@ -47,7 +48,7 @@ Justification: gcsfuse is a FUSE (Filesystem in Userspace) layer that mounts a G
        **C.** In .dvc/config after dvc remote add -d ... </br>
        **D.** In the docker run command via -v “$BASE_DIR”:/app </br>
 
-**Answer Q3:** **B** is the right answer. docker-entrypoint.sh executes when the container starts and it runs gcsfuse to mount the bucket and then it performs necessary bind mounts to make the data available to the application's expected path (/app/cheese_dataset) using the command "mount --bind /mnt/gcs_data/images /app/cheese_dataset".
+**Answer Q3:** **B** is the right answer. docker-entrypoint.sh executes when the container starts and it runs gcsfuse to mount the bucket and then it performs necessary bind mounts to make the data available to the application's expected path (/app/cheese_dataset) using the command `mount --bind /mnt/gcs_data/images /app/cheese_dataset`.
 
 
 
@@ -55,8 +56,8 @@ Justification: gcsfuse is a FUSE (Filesystem in Userspace) layer that mounts a G
 
 **Answer Q4:** No, the new image file outside the container in the cheese_dataset will not appear in GCS bucket becuase the data-versioning flow depends on the FUSE mount inside the container, not the host folder.
 The behavior is determined by the following lines in the docker-entrypoint.sh
-1. gcsfuse gs://$GCS_BUCKET_NAME/images /mnt/gcs_data/images
-2. mount --bind /mnt/gcs_data/images /app/cheese_dataset
+1. `gcsfuse gs://$GCS_BUCKET_NAME/images /mnt/gcs_data/images`
+2. `mount --bind /mnt/gcs_data/images /app/cheese_dataset`
 
 **Q5 [2 points].** In the `docker-entrypoint.sh` there is a line `mkdir -p /app/cheese_dataset`. Is this line necessary? If yes, explain why it is included and what would happen if it were removed.
 
@@ -72,4 +73,4 @@ Run this outside the container.
 
 Given the current setup, do we actually need to perform this step outside the container? If not, explain why, and identify where in the code this step is already handled.
 
-**Answer Q6:**   No, we don't need to perform this step outside the container. The docker file line number 4 "ARG DEBIAN_PACKAGES="build-essential git curl wget unzip gzip"", ensures git is available in the container, which is the reason why the "update Git to track DVC" can be run either inside or outside the container.
+**Answer Q6:**   No, we don't need to perform this step outside the container. The docker file line number 4 `ARG DEBIAN_PACKAGES="build-essential git curl wget unzip gzip"`, ensures git is available in the container, which is the reason why the "update Git to track DVC" can be run either inside or outside the container.
